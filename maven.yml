@@ -1,5 +1,5 @@
 ---
-- name: Install Maven in g2 -Build server
+- name: Install Maven in g3 Build server
   hosts: g3
   become: true
   tasks:
