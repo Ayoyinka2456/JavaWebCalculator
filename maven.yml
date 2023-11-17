@@ -131,6 +131,6 @@
         repo: https://github.com/ceeyIT/JavaWebCalculator.git
         # dest: ~/
         dest: .
-        version: master
+        version: main
 
 ...
