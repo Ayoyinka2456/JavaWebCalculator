@@ -1,25 +1,35 @@
 pipeline {
     agent {
-        label 'Build-server'
+        label 'ansible'
     }
-    tools {
-        maven 'Maven'
-        jdk 'Java11'
-    }
+    // tools {
+    //     maven 'Maven'
+    //     jdk 'Java11'
+    // }
     stages {
-
         stage('Checkout') {
             steps {
-                git 'https://github.com/Ayoyinka2456/Jenkins-pipeline1.git'
+                git 'https://github.com/Ayoyinka2456/Jenkins-ansible.git'
+            }
+        }
+        
+        stage('Prepping Tomcat and Maven servers') {
+            steps {
+                sh 'cd Jenkins-ansible/ && ansible-playbook playbook2.yml maven2.yml -i hosts.ini'
             }
         }
         stage('Build') {
+            agent {
+                label 'Maven'
+            }
             steps {
                 sh 'mvn clean install'
             }
         }
         stage('Test') {
-
+            agent {
+                label 'Maven'
+            }
             steps {
                 sh 'mvn test'
                 stash(name: 'packaged_code', includes: 'target/*.war')
@@ -27,28 +37,13 @@ pipeline {
         }
         stage('Deploy to Tomcat') {
             agent {
-                label 'ansible-server'
+                label 'n1_centos n2_ubuntu'
             }
-            stage('Run Ansible') {
-                steps {
-                    unstash 'packaged_code'
-                    script {
-                        ansiblePlaybook(
-                            playbook: '~/playbook.yml',
-                            inventory: '~/hosts.ini'
-                        )
-                    }
-                    sh "sudo mv target/*.war ~/opt/tomcat/webapps/"
-                    sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
-                }
+            steps {
+                unstash 'packaged_code'
+                sh "sudo rm -rf /opt/tomcat/webapp/*.war"
+                sh "sudo mv target/*.war /opt/tomcat/webapps/"
+                sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
             }
         }
-    }
-    post{
-        always {
-            emailext body: 'Check console output at $BUILD_URL to view the results.', 
-            subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', 
-            to: 'eas.adeyemi@gmail.com'
-        }
-    }     
-}
+    }}
