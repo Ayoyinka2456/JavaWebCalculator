@@ -1,0 +1,136 @@
+---
+- name: Install Maven in g2 -Build server
+  hosts: g3
+  become: true
+  tasks:
+    # - name: Install Java (OpenJDK)
+    #   block:
+    #     - name: Install openjdk-11-jdk using apt
+    #       apt:
+    #         name: openjdk-11-jdk
+    #         state: present
+    #       when: ansible_pkg_mgr == "apt"
+    #     - name: Install openjdk-11-jdk using yum
+    #       yum:
+    #         name:
+    #           - java-11-openjdk
+    #           - git
+    #           - wget
+    #         state: present
+    #       when: ansible_pkg_mgr == "yum"
+    # - name: Append content to the file
+    #   block:
+    #     - name: Create or append content to ~/.bashrc
+    #       ansible.builtin.lineinfile:
+    #         path: ~/.bashrc
+    #         line: "{{ lookup('file', 'bashrc.sh') }}"
+    #         remote_src: yes
+    #   become: yes
+    # - name: Run bashrc
+    #   ansible.builtin.shell:
+    #     cmd: "source ~/.bashrc"
+    #     executable: /bin/bash
+    #   become: yes
+    - name: Update package manager cache
+      block:
+        - name: Update apt cache
+          apt:
+            update_cache: yes
+          when: ansible_pkg_mgr == "apt"
+        - name: Update yum cache
+          yum:
+            update_cache: yes
+          when: ansible_pkg_mgr == "yum"
+
+    - name: Install Java (OpenJDK)
+      block:
+        - name: Install openjdk-11-jdk using apt
+          apt:
+            name: openjdk-11-jdk
+            state: present
+          when: ansible_pkg_mgr == "apt"
+        - name: Install openjdk-11-jdk using yum
+          yum:
+            name: java-11-openjdk
+            state: present
+          when: ansible_pkg_mgr == "yum"
+# download maven
+    - name: Download Apache Maven
+      block:
+        - name: Download Apache Maven archive
+          get_url:
+            url: "https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz"
+            dest: "~/apache-maven-3.9.5-bin.tar.gz"
+            
+    - name: Extract Apache Maven archive to /opt
+      ansible.builtin.unarchive:
+        src: "~/apache-maven-3.9.5-bin.tar.gz"
+        dest: /opt
+        remote_src: yes
+      become: yes
+    
+    - name: Create symbolic link /opt/maven
+      file:
+        src: /opt/apache-maven-3.9.5
+        dest: /opt/maven
+        state: link
+      become: yes
+
+
+    # - name: Create an empty file
+    #   ansible.builtin.file:
+    #     path: /etc/profile.d/maven.sh
+    #     state: touch
+
+    - name: Create file and add multiline text
+      ansible.builtin.copy:
+        content: |
+          # Apache Maven Environmental Variables
+          # MAVEN_HOME for Maven 1 - M2_HOME for Maven 2
+          export JAVA_HOME=/usr/lib/jvm/jre-openjdk
+          export M2_HOME=/opt/maven
+          export MAVEN_HOME=/opt/maven
+          export PATH=${M2_HOME}/bin:${PATH}
+
+        dest: /etc/profile.d/maven.sh
+        remote_src: yes
+      become: yes
+
+
+    # - name: Copy configuration file from Master to node for maven.sh
+    #   copy:
+    #     src: "{{ playbook_dir }}/maven.sh"
+    #     dest: /etc/profile.d/
+    #     remote_src: yes
+    #   become: yes
+
+    - name: Set executable permissions for /etc/profile.d/maven.sh
+      file:
+        path: /etc/profile.d/
+        mode: '0777'
+        recurse: yes
+      become: yes
+
+    - name: Source /etc/profile.d/maven.sh
+      ansible.builtin.shell:
+        cmd: "cd /etc/profile.d/ && source maven.sh"
+        executable: /bin/bash
+      become: yes
+
+- name: Clone Git repository
+  hosts: g3
+  tasks:
+    - name: Ensure Git is installed
+      become: true
+      package:
+        name: git
+        state: present
+
+    - name: Clone the Git repository
+      git:
+        repo: https://github.com/ceeyIT/JavaWebCalculator.git
+        # dest: ~/
+        dest: .
+        version: master
+
+...
