@@ -1,148 +1,71 @@
-
 ---
-
-# Debian -- Ubuntu Fedora OpenSuse
-- name: Installing TOMCAT
-  hosts: g1
-  become: yes
-  tasks:
-    - name: Updating apt cache
-      apt:
-        update_cache: yes
-      when: ansible_os_family == "Debian"
-
-    - name: Installing Java-11 on Debian
-      apt:
-        name: openjdk-11-jdk
-        state: present
-      when: ansible_os_family == "Debian"
-
-    - name: Installing Java-11 on RedHat
-      yum:
-        name: java-11-openjdk-devel
-        state: present
-      when: ansible_os_family == "RedHat"
-
-    - name: Download and extract Apache Tomcat
-      get_url:
-        url: "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.15/bin/apache-tomcat-10.1.15.tar.gz"
-        dest: "/opt/"
-
-    - name: Extract Tomcat archive
-      ansible.builtin.unarchive:
-        src: "/opt/apache-tomcat-10.1.15.tar.gz"
-        dest: "/opt/"
-        remote_src: yes
-
-    - name: Rename Tomcat directory
-      command: mv /opt/apache-tomcat-10.1.15 /opt/tomcat
-
-    - name: Configure systemd service for Tomcat (complete this task with your configuration details)
-      systemd:
-        name: tomcat
-        enabled: yes
-        state: started
-        daemon_reload: yes
-        unit_file_content: |
-          [Unit]
-          Description=Apache Tomcat
-          After=network.target
-
-          [Service]
-          Type=forking
-          ExecStart=/opt/tomcat/bin/startup.sh
-          ExecStop=/opt/tomcat/bin/shutdown.sh
-          Restart=always
-
-          [Install]
-          WantedBy=multi-user.target
-
-
-
-    #RedHat-- centos, linux
-
-#dnf for AWS Linux only
-  - name: install Apache on Red Hat family
-    dnf:
-      name: httpd
-      state: present
-      update_cache: yes
-    when: ansible_os_family == "RedHat" and ansible_user_id == 'ec2-user'
-  - name: install Apache on Red Hat family
-    yum:
-      name: httpd
-      state: present
-      update_cache: yes
-    when: ansible_os_family == "RedHat" and ansible_user_id == 'centos'
-
-  - name: start Apache
-    service:
-      name: httpd
-      state: started
-    when: ansible_os_family == "RedHat"
-
-  - name: enable Apache
-    service:
-      name: httpd
-      enabled: true
-    when: ansible_os_family == "RedHat"
-...
-
----
-- name: Install Apache Tomcat on Ubuntu
-  hosts: your_tomcat_servers
+- name: Install Apache Tomcat on Ubuntu, RedHat, AWS Linux
+  hosts: g1 g2
   become: true
   tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
+    - name: Get user information
+      setup:
+      register: ansible_info
 
+    - name: Get user variables
+      set_fact:
+        username: "{{ ansible_info.ansible_facts.ansible_user_id }}"
+
+    - name: Update package manager cache
+      block:
+        - name: Update apt cache
+          apt:
+            update_cache: yes
+          when: ansible_pkg_mgr == "apt"
+        - name: Update yum cache
+          yum:
+            update_cache: yes
+          when: ansible_pkg_mgr == "yum"
     - name: Install Java (OpenJDK)
-      apt:
-        name: openjdk-11-jdk
-        state: present
+      block:
+        - name: Install openjdk-11-jdk using apt
+          apt:
+            name: openjdk-11-jdk
+            state: present
+          when: ansible_pkg_mgr == "apt"
+        - name: Install openjdk-11-jdk using yum
+          yum:
+            name: java-11-openjdk
+            state: present
+          when: ansible_pkg_mgr == "yum"
 
+    - name: Add User to ROOT GROUP
+      user:
+        name: "{{ username }}"
+        groups: root
+        append: yes
+      become: yes
     - name: Download and extract Apache Tomcat
       get_url:
-        url: "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz"
-        dest: "/opt/"
-      delegate_to: localhost
-
+        url: https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.15/bin/apache-tomcat-10.1.15.tar.gz
+        dest: /opt
     - name: Extract Tomcat archive
-      ansible.builtin.unarchive:
-        src: "/opt/apache-tomcat-9.0.56.tar.gz"
-        dest: "/opt/"
+      unarchive:
+        src: /opt/apache-tomcat-10.1.15.tar.gz
+        dest: /opt
         remote_src: yes
-
+    - name: Remove existing toncat dir
+      command: rm -rf /opt/tomcat
     - name: Rename Tomcat directory
-      command: mv /opt/apache-tomcat-9.0.56 /opt/tomcat
+      command: mv -f /opt/apache-tomcat-10.1.15 /opt/tomcat
+    # - name: Change ownership of Tomcat dir
+    #   file:
+    #     path: /opt/tomcat
+    #     owner: "{{ username }}"
+    #     group: root
+    #   become: yes
 
-    - name: Set ownership and permissions
+    - name: Set permissions on /opt/
       ansible.builtin.file:
-        path: "/opt/tomcat"
-        owner: your_user
-        group: your_group
+        path: /opt/
+        mode: '0777'
         recurse: yes
-        mode: "0755"
-
-    - name: Configure systemd service for Tomcat
-      systemd:
-        name: tomcat
-        enabled: yes
-        state: started
-        daemon_reload: yes
-        unit_file_content: |
-          [Unit]
-          Description=Apache Tomcat
-          After=network.target
-
-          [Service]
-          Type=forking
-          ExecStart=/opt/tomcat/bin/startup.sh
-          ExecStop=/opt/tomcat/bin/shutdown.sh
-          User=your_user
-          Group=your_group
-          Restart=always
-
-          [Install]
-          WantedBy=multi-user.target
+      become: yes
+    - name: Configure service for Tomcat
+      command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+...
