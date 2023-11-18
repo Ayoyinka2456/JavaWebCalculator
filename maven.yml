@@ -125,17 +125,28 @@
       package:
         name: git
         state: present
-        
-    - name: make empty JavaWebCalculator directory
-      ansible.builtin.shell:
-        cmd: "mkdir ~/JavaWebCalculator"
-        executable: /bin/bash
+    - name: Make empty JavaWebCalculator directory
+      ansible.builtin.file:
+        path: "/home/{{ansible_user_id}}/JavaWebCalculator"
+        state: directory
       become: yes
-      
+    
     - name: Clone the Git repository
       git:
         repo: https://github.com/ceeyIT/JavaWebCalculator.git
-        dest: ~/JavaWebCalculator
+        dest: /home/{{ansible_user_id}}/JavaWebCalculator
         version: master
-
+        
+    # - name: make empty JavaWebCalculator directory
+    #   ansible.builtin.shell:
+    #     cmd: "mkdir ~/JavaWebCalculator"
+    #     executable: /bin/bash
+    #   become: yes
+      
+    # - name: Clone the Git repository
+    #   git:
+    #     repo: https://github.com/ceeyIT/JavaWebCalculator.git
+    #     dest: ~/JavaWebCalculator
+    #     version: master
+    
 ...
