@@ -13,7 +13,7 @@ pipeline {
       }        
         stage('Prepping Tomcat and Maven servers') {
             steps {
-                sh 'cd /home/centos/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
+                sh 'cd /home/{{ansible_user_id}}/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
             }
         }
         stage('Build') {
