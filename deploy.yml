@@ -1,0 +1,15 @@
+---
+- name: Deploying war file on Apache Tomcat, Ubuntu, RedHat, AWS Linux
+  hosts: g3
+  become: true
+  tasks:
+    - name: Copy a file to a remote host
+      copy:
+        src: ~/workspace/jenkins-ansible/target/*.war
+        dest: /opt/tomcat/webapps/
+        force: yes
+      remote_src: yes
+
+    - name: Configure service for Tomcat
+      command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+...
