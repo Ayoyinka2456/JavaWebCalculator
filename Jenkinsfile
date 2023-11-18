@@ -4,7 +4,6 @@ pipeline {
     }
     tools {
       git 'Default'
-      mvn 'maven'
     }
     stages {
       stage('Clone Repository') {
@@ -14,7 +13,7 @@ pipeline {
       }        
         stage('Prepping Tomcat and Maven servers') {
             steps {
-                sh 'cd jenkins-ansible/ && ansible-playbook playbook2.yml maven2.yml -i hosts.ini'
+                sh 'cd /home/centos/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
             }
         }
         stage('Build') {
@@ -35,14 +34,30 @@ pipeline {
             }
         }
         stage('Deploy to Tomcat') {
-            agent {
-                label 'n1_centos n2_ubuntu'
-            }
-            steps {
-                unstash 'packaged_code'
-                sh "sudo rm -rf /opt/tomcat/webapps/*.war"
-                sh "sudo mv target/*.war /opt/tomcat/webapps/"
-                sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
+            parallel {
+                stage('n1_centos') {
+                    agent {
+                        label 'n1_centos'
+                    }
+                    steps {
+                        unstash 'packaged_code'
+                        sh "sudo rm -rf /opt/tomcat/webapps/*.war"
+                        sh "sudo mv target/*.war /opt/tomcat/webapps/"
+                        sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
+                    }
+                }
+                stage('n2_ubuntu') {
+                    agent {
+                        label 'n2_ubuntu'
+                    }
+                    steps {
+                        unstash 'packaged_code'
+                        sh "sudo rm -rf /opt/tomcat/webapps/*.war"
+                        sh "sudo mv target/*.war /opt/tomcat/webapps/"
+                        sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
+                    }
+                }
             }
         }
-    }}
+    }
+}
