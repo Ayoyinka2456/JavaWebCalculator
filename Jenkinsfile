@@ -21,7 +21,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh 'mvn clean install'
+                sh 'cd /home/{{ansible_user_id}}/Jenkins-ansible/workspace/jenkins-ansible && mvn clean install'
             }
         }
         stage('Test') {
@@ -29,7 +29,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh 'mvn test'
+                sh 'cd /home/{{ansible_user_id}}/Jenkins-ansible/workspace/jenkins-ansible && mvn test'
                 stash(name: 'packaged_code', includes: 'target/*.war')
             }
         }
