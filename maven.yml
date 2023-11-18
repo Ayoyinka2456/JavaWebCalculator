@@ -127,7 +127,7 @@
         state: present
     # - name: Make empty JavaWebCalculator directory
     #   ansible.builtin.file:
-    #     path: "/home/{{ansible_ser_id}}/workspace/jenkins-ansible/JavaWebCalculator"
+    #     path: "/home/{{ansible_user_id}}/workspace/jenkins-ansible/JavaWebCalculator"
     #     state: directory
     #   become: yes
     
