@@ -3,8 +3,8 @@ pipeline {
         label 'ansible'
     }
     tools {
-      git 'default'
-      mvn 'maven
+      git 'Default'
+      mvn 'maven'
     }
     stages {
       stage('Clone Repository') {
