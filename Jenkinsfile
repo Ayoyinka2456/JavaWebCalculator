@@ -14,7 +14,7 @@ pipeline {
       }        
         stage('Prepping Tomcat and Maven servers') {
             steps {
-                sh 'cd Jenkins-ansible/ && ansible-playbook playbook2.yml maven2.yml -i hosts.ini'
+                sh 'cd jenkins-ansible/ && ansible-playbook playbook2.yml maven2.yml -i hosts.ini'
             }
         }
         stage('Build') {
