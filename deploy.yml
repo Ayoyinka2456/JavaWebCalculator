@@ -1,5 +1,5 @@
 ---
-- name: Deploying war file on Apache Tomcat, Ubuntu, RedHat, AWS Linux
+- name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
   hosts: g3
   become: true
   tasks:
