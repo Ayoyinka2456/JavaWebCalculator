@@ -30,7 +30,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh "cd ${env.WORKSPACE)/ && mvn clean install"
+                sh "cd ${env.WORKSPACE}/ && mvn clean install"
             }
         }
         stage('Test') {
@@ -38,7 +38,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh "cd ${env.WORKSPACE)/ && mvn test"
+                sh "cd ${env.WORKSPACE}/ && mvn test"
                 stash(name: 'packaged_code', includes: 'target/*.war')
             }
         }
