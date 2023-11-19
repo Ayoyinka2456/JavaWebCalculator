@@ -49,7 +49,7 @@ pipeline {
                     steps {
                         unstash 'packaged_code'
                         sh "sudo rm -rf /opt/tomcat/webapps/*.war"
-                        sh "sudo mv target/*.war /opt/tomcat/webapps/"
+                        sh "sudo mv JavaWebCalculator/target/*.war /opt/tomcat/webapps/"
                         sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
                     }
                 }
@@ -60,7 +60,7 @@ pipeline {
                     steps {
                         unstash 'packaged_code'
                         sh "sudo rm -rf /opt/tomcat/webapps/*.war"
-                        sh "sudo mv target/*.war /opt/tomcat/webapps/"
+                        sh "sudo mv JavaWebCalculator/target/*.war /opt/tomcat/webapps/"
                         sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
                     }
                 }
