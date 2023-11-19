@@ -5,8 +5,7 @@ pipeline {
     tools {
       git 'Default'
     }
-    stages {
-        
+    stages {     
       stage('Clone Repository') {
         steps {
             script {
@@ -24,7 +23,7 @@ pipeline {
         stage('Prepping Tomcat and Maven servers') {
             steps {
                 // sh 'cd /home/centos/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
-                sh 'cd ${env.WORKSPACE)/Jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
+                sh "cd ${env.WORKSPACE}/Jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini"
             }
         }
         stage('Build') {
