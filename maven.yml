@@ -127,14 +127,14 @@
         state: present
     # - name: Make empty JavaWebCalculator directory
     #   ansible.builtin.file:
-    #     path: "/home/{{ansible_user_id}}/workspace/jenkins-ansible/JavaWebCalculator"
+    #     path: "/home/{{ansible_user_id}}/workspace/Jenkins-ansible/JavaWebCalculator"
     #     state: directory
     #   become: yes
     
     - name: Clone the Git repository
       git:
         repo: https://github.com/ceeyIT/JavaWebCalculator.git
-        dest: /home/{{ansible_user_id}}/workspace/jenkins-ansible/
+        dest: /home/{{ansible_user_id}}/workspace/Jenkins-ansible/
         version: master
         
     # - name: make empty JavaWebCalculator directory
