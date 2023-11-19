@@ -11,8 +11,6 @@ pipeline {
             script {
                     // Specify the target directory
                     def targetDir = "${env.WORKSPACE}/"
-                    sh "cat targetDir"
-            
                     // Clone the repository into the specified directory
                     dir(targetDir) {
                         git branch: 'main', url: 'https://github.com/Ayoyinka2456/Jenkins-ansible.git'
@@ -23,6 +21,7 @@ pipeline {
       }        
         stage('Prepping Tomcat and Maven servers') {
             steps {
+                sh "cat targetDir"
                 // sh 'cd /home/centos/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
                 sh "cd ${env.WORKSPACE}/jenkins-ansible-project/ && ansible-playbook playbook.yml maven.yml -i hosts.ini"
             }
