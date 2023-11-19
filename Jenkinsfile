@@ -6,14 +6,25 @@ pipeline {
       git 'Default'
     }
     stages {
+        
       stage('Clone Repository') {
         steps {
-          git branch: 'main', url: 'https://github.com/Ayoyinka2456/Jenkins-ansible.git'
+            script {
+                    // Specify the target directory
+                    def targetDir = "${env.WORKSPACE}/"
+            
+                    // Clone the repository into the specified directory
+                    dir(targetDir) {
+                        git branch: 'main', url: 'https://github.com/Ayoyinka2456/Jenkins-ansible.git'
+                    }
+            }
+          // git branch: 'main', url: 'https://github.com/Ayoyinka2456/Jenkins-ansible.git'
         }
       }        
         stage('Prepping Tomcat and Maven servers') {
             steps {
-                sh 'cd /home/centos/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
+                // sh 'cd /home/centos/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
+                sh 'cd ${env.WORKSPACE)/Jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
             }
         }
         stage('Build') {
@@ -21,7 +32,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh 'cd /home/centos/workspace/jenkins-ansible && mvn clean install'
+                sh 'cd ${env.WORKSPACE)/Jenkins-ansible/ && mvn clean install'
             }
         }
         stage('Test') {
@@ -29,7 +40,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh 'cd /home/centos/workspace/jenkins-ansible && mvn test'
+                sh 'cd ${env.WORKSPACE)/Jenkins-ansible/ && mvn test'
                 stash(name: 'packaged_code', includes: 'target/*.war')
             }
         }
