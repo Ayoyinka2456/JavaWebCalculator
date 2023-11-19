@@ -21,6 +21,13 @@
           yum:
             update_cache: yes
           when: ansible_pkg_mgr == "yum"
+          
+    - name: Ensure Git is installed
+      become: true
+      package:
+        name: git
+        state: present
+        
     - name: Install Java (OpenJDK)
       block:
         - name: Install openjdk-11-jdk using apt
@@ -53,12 +60,6 @@
       command: rm -rf /opt/tomcat
     - name: Rename Tomcat directory
       command: mv -f /opt/apache-tomcat-10.1.15 /opt/tomcat
-    # - name: Change ownership of Tomcat dir
-    #   file:
-    #     path: /opt/tomcat
-    #     owner: "{{ username }}"
-    #     group: root
-    #   become: yes
 
     - name: Set permissions on /opt/
       ansible.builtin.file:
