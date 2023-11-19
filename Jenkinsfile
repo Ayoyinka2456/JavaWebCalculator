@@ -21,9 +21,8 @@ pipeline {
       }        
         stage('Prepping Tomcat and Maven servers') {
             steps {
-                sh "cat ${env.WORKSPACE}"
                 // sh 'cd /home/centos/Jenkins-ansible/workspace/jenkins-ansible/ && ansible-playbook playbook.yml maven.yml -i hosts.ini'
-                sh "cd ${env.WORKSPACE}/jenkins-ansible-project/ && ansible-playbook playbook.yml maven.yml -i hosts.ini"
+                sh "cd ${env.WORKSPACE}/ && ansible-playbook playbook.yml maven.yml -i hosts.ini"
             }
         }
         stage('Build') {
@@ -31,7 +30,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh 'cd ${env.WORKSPACE)/jenkins-ansible-project/ && mvn clean install'
+                sh 'cd ${env.WORKSPACE)/ && mvn clean install'
             }
         }
         stage('Test') {
@@ -39,7 +38,7 @@ pipeline {
                 label 'Maven'
             }
             steps {
-                sh 'cd ${env.WORKSPACE)/jenkins-ansible-project/ && mvn test'
+                sh 'cd ${env.WORKSPACE)/ && mvn test'
                 stash(name: 'packaged_code', includes: 'target/*.war')
             }
         }
