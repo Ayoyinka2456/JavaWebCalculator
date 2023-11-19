@@ -3,7 +3,7 @@
   hosts: g3
   become: true
   tasks:
-      - name: Update package manager cache
+    - name: Update package manager cache
       block:
         - name: Update apt cache
           apt:
@@ -26,21 +26,21 @@
             name: java-11-openjdk
             state: present
           when: ansible_pkg_mgr == "yum"
-# download maven
+
     - name: Download Apache Maven
       block:
         - name: Download Apache Maven archive
           get_url:
             url: "https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz"
             dest: "~/apache-maven-3.9.5-bin.tar.gz"
-            
+
     - name: Extract Apache Maven archive to /opt
       ansible.builtin.unarchive:
         src: "~/apache-maven-3.9.5-bin.tar.gz"
         dest: /opt
         remote_src: yes
       become: yes
-    
+
     - name: Create symbolic link /opt/maven
       file:
         src: /opt/apache-maven-3.9.5
@@ -57,7 +57,6 @@
           export M2_HOME=/opt/maven
           export MAVEN_HOME=/opt/maven
           export PATH=${M2_HOME}/bin:${PATH}
-
         dest: /etc/profile.d/maven.sh
         remote_src: yes
       become: yes
@@ -87,6 +86,6 @@
     - name: Clone the Git repository
       git:
         repo: https://github.com/ceeyIT/JavaWebCalculator.git
-        dest: ~/workspace/jenkins-ansible-project/
+        dest: "~/workspace/jenkins-ansible-project/"
         version: master
 ...
