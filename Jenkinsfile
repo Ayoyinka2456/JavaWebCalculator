@@ -37,7 +37,7 @@ pipeline {
             }
             steps {
                 sh "cd ${env.WORKSPACE}/JavaWebCalculator/ && mvn test"
-                stash(name: 'packaged_code', includes: '${env.WORKSPACE}/JavaWebCalculator/target/*.war')
+                stash(name: 'packaged_code', includes: 'JavaWebCalculator/target/*.war')
             }
         }
         stage('Deploy to Tomcat') {
