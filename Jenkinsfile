@@ -11,6 +11,7 @@ pipeline {
             script {
                     // Specify the target directory
                     def targetDir = "${env.WORKSPACE}/"
+                    sh "cat targetDir"
             
                     // Clone the repository into the specified directory
                     dir(targetDir) {
