@@ -25,7 +25,7 @@
         src: ~/workspace/JavaWebCalculator/*.war
         dest: /opt/tomcat/webapps/
         force: yes
-      remote_src: yes
+      # remote_src: yes
 
     - name: Configure service for Tomcat
       command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
