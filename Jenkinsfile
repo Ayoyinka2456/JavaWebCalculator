@@ -51,7 +51,7 @@
                 // sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
                 
                 // sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
-                sh 'ansible g1 -m copy -a "src=/home/centos/workspace/JavaWebCalculator/*.war dest=/opt/tomcat/webapps/" '
+                sh 'ansible g1 -m copy -a "src=/home/centos/workspace/JavaWebCalculator/*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
                 
             }
         }
