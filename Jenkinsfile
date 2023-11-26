@@ -1,4 +1,4 @@
-pipeline {
+    pipeline {
     agent {
         label 'ansible'
     }
@@ -41,29 +41,16 @@ pipeline {
             }
         }
         stage('Deploy to Tomcat') {
-            parallel {
-                stage('n1_centos') {
-                    agent {
-                        label 'n1_centos'
-                    }
-                    steps {
-                        unstash 'packaged_code'
-                        sh "sudo rm -rf /opt/tomcat/webapps/*.war"
-                        sh "sudo mv JavaWebCalculator/target/*.war /opt/tomcat/webapps/"
-                        sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
-                    }
-                }
-                stage('n2_ubuntu') {
-                    agent {
-                        label 'n2_ubuntu'
-                    }
-                    steps {
-                        unstash 'packaged_code'
-                        sh "sudo rm -rf /opt/tomcat/webapps/*.war"
-                        sh "sudo mv JavaWebCalculator/target/*.war /opt/tomcat/webapps/"
-                        sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
-                    }
-                }
+            agent {
+                label 'ansible'
+            }
+            steps {
+                unstash 'packaged_code'
+                sh "sudo rm -rf ${env.WORKSPACE}/*.war"
+                sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE}/"
+                // sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
+                sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
+                
             }
         }
     }
