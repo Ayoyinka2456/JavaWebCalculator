@@ -1,6 +1,7 @@
 ---
 - name: Install Apache Tomcat on Ubuntu, RedHat, AWS Linux
-  hosts: g1 g2
+  # hosts: g1 g2
+  hosts: g1
   become: true
   tasks:
     - name: Get user information
@@ -56,7 +57,7 @@
         src: /opt/apache-tomcat-10.1.15.tar.gz
         dest: /opt
         remote_src: yes
-    - name: Remove existing toncat dir
+    - name: Remove existing tomcat dir
       command: rm -rf /opt/tomcat
     - name: Rename Tomcat directory
       command: mv -f /opt/apache-tomcat-10.1.15 /opt/tomcat
