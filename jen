@@ -1,0 +1,70 @@
+pipeline {
+    agent {
+        label 'ansible'
+    }
+    tools {
+        git 'Default'
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                script {
+                    // Specify the target directory
+                    def targetDir = "${env.WORKSPACE}/"
+                    // Clone the repository into the specified directory
+                    dir(targetDir) {
+                        git branch: 'main', url: 'https://github.com/Ayoyinka2456/JavaWebCalculator.git'
+                    }
+                }
+            }
+        }
+        stage('Prepping Tomcat and Maven servers') {
+            steps {
+                sh "cd ${env.WORKSPACE}/ && ansible-playbook playbook.yml maven.yml -i hosts.ini"
+            }
+        }
+        stage('Build') {
+            agent {
+                label 'Maven'
+            }
+            steps {
+                sh "cd ${env.WORKSPACE}/JavaWebCalculator/ && mvn clean install"
+            }
+        }
+        stage('Test') {
+            agent {
+                label 'Maven'
+            }
+            steps {
+                sh "cd ${env.WORKSPACE}/JavaWebCalculator/ && mvn test"
+                stash(name: 'packaged_code', includes: 'JavaWebCalculator/target/*.war')
+            }
+        }
+        stage('Deploy to Tomcat') {
+            parallel {
+                stage('n1_centos') {
+                    agent {
+                        label 'n1_centos'
+                    }
+                    steps {
+                        unstash 'packaged_code'
+                        sh "sudo rm -rf /opt/tomcat/webapps/*.war"
+                        sh "sudo mv JavaWebCalculator/target/*.war /opt/tomcat/webapps/"
+                        sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
+                    }
+                }
+                stage('n2_ubuntu') {
+                    agent {
+                        label 'n2_ubuntu'
+                    }
+                    steps {
+                        unstash 'packaged_code'
+                        sh "sudo rm -rf /opt/tomcat/webapps/*.war"
+                        sh "sudo mv JavaWebCalculator/target/*.war /opt/tomcat/webapps/"
+                        sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
+                    }
+                }
+            }
+        }
+    }
+}
