@@ -41,19 +41,14 @@
             }
         }
         stage('Deploy to Tomcat') {
-            // agent {
-            //     label 'ansible'
-            // }
             steps {
                 unstash 'packaged_code'
                 sh "sudo rm -rf ${env.WORKSPACE}/*.war"
-                sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE}/"
-                // sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
-                
+                // sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE}/"                
                 // sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
-                // sh 'ansible g1 -m copy -a "src=/home/centos/workspace/JavaWebCalculator/*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
+                sh 'ansible g1 -m copy -a "src=JavaWebCalculator/target/*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
                 
-                sh 'ansible g1 -m copy -a "src=${WORKSPACE}/webapp-0.2.war dest=/opt/tomcat/webapps/" -i hosts.ini'
+                // sh 'ansible g1 -m copy -a "src=${WORKSPACE}/webapp-0.2.war dest=/opt/tomcat/webapps/" -i hosts.ini'
 
                 
             }
