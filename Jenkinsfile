@@ -53,7 +53,7 @@
                 // sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
                 // sh 'ansible g1 -m copy -a "src=/home/centos/workspace/JavaWebCalculator/*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
                 
-                sh 'ansible g1 -m copy -a "src=${WORKSPACE}/JavaWebCalculator/*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
+                sh 'ansible g1 -m copy -a "src=${WORKSPACE}/*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
 
                 
             }
