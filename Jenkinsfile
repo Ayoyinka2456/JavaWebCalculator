@@ -41,9 +41,9 @@
             }
         }
         stage('Deploy to Tomcat') {
-            agent {
-                label 'ansible'
-            }
+            // agent {
+            //     label 'ansible'
+            // }
             steps {
                 unstash 'packaged_code'
                 sh "sudo rm -rf ${env.WORKSPACE}/*.war"
