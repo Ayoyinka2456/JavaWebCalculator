@@ -22,7 +22,7 @@
   tasks:
     - name: Copy a file to a remote host
       copy:
-        src: /home/centos/workspace/JavaWebCalculator/*.war
+        src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
         dest: /opt/tomcat/webapps/
         force: yes
       # remote_src: yes
