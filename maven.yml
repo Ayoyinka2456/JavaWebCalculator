@@ -73,24 +73,21 @@
         cmd: "cd /etc/profile.d/ && source maven.sh"
         executable: /bin/bash
       become: yes
-
-      ##
-- name: Create a JavaWebCalculator directory
-  become: true
-  file:
-    path: "~/workspace/JavaWebCalculator/JavaWebCalculator"
-    state: directory
-    mode: 0755
-
-  ##
-- name: Clone Git repository
-  hosts: g3
-  tasks:
-    - name: Ensure Git is installed
+    - name: Create a JavaWebCalculator directory
       become: true
-      package:
-        name: git
-        state: present
+      file:
+        path: "~/workspace/JavaWebCalculator/JavaWebCalculator"
+        state: directory
+        mode: 0755
+
+    - name: Clone Git repository
+      hosts: g3
+      tasks:
+        - name: Ensure Git is installed
+          become: true
+          package:
+            name: git
+            state: present
 
     - name: Clone the Git repository
       git:
