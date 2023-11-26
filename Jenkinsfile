@@ -49,7 +49,9 @@
                 sh "sudo rm -rf ${env.WORKSPACE}/*.war"
                 sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE}/"
                 // sh "sudo /opt/tomcat/bin/shutdown.sh && sudo /opt/tomcat/bin/startup.sh"
-                sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
+                
+                // sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
+                ansible g1 -m copy -a "src=~/workspace/JavaWebCalculator/*.war dest=/opt/tomcat/webapps/"
                 
             }
         }
