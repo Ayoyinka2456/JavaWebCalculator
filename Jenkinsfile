@@ -13,7 +13,7 @@ pipeline {
                     def targetDir = "${env.WORKSPACE}/"
                     // Clone the repository into the specified directory
                     dir(targetDir) {
-                        git branch: 'main', url: 'https://github.com/Ayoyinka2456/Jenkins-ansible.git'
+                        git branch: 'main', url: 'https://github.com/Ayoyinka2456/JavaWebCalculator.git'
                     }
                 }
             }
