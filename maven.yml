@@ -80,14 +80,14 @@
         state: directory
         mode: 0755
 
-    - name: Clone Git repository
-      hosts: g3
-      tasks:
-        - name: Ensure Git is installed
-          become: true
-          package:
-            name: git
-            state: present
+- name: Clone Git repository
+  hosts: g3
+  tasks:
+    - name: Ensure Git is installed
+      become: true
+      package:
+        name: git
+        state: present
 
     - name: Clone the Git repository
       git:
