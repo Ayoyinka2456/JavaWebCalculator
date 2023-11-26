@@ -1,11 +1,28 @@
+# ---
+# - name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
+#   hosts: g3
+#   become: true
+#   tasks:
+#     - name: Copy a file to a remote host
+#       copy:
+#         src: ~/workspace/jenkins-ansible/target/*.war
+#         dest: /opt/tomcat/webapps/
+#         force: yes
+#       remote_src: yes
+
+#     - name: Configure service for Tomcat
+#       command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+# ...
+
+
 ---
 - name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
-  hosts: g3
+  hosts: g1
   become: true
   tasks:
     - name: Copy a file to a remote host
       copy:
-        src: ~/workspace/jenkins-ansible/target/*.war
+        src: ~/workspace/JavaWebCalculator/JavaWebCalculator/target/*.war
         dest: /opt/tomcat/webapps/
         force: yes
       remote_src: yes
