@@ -44,9 +44,9 @@
             steps {
                 unstash 'packaged_code'
                 sh "sudo rm -rf ${env.WORKSPACE}/*.war"
-                sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE}/"                
+                sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE} && cd ${env.WORKSPACE}/"                
                 // sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
-                sh 'cd ${env.WORKSPACE}/ && ansible g1 -m copy -a "src=*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
+                sh 'ansible g1 -m copy -a "src=*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
 
                 
             }
