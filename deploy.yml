@@ -81,10 +81,10 @@
       command: /opt/tomcat/bin/startup.sh
       when: "'FAILED' not in job_result.stdout"
 
-    - name: Configure service for Tomcat (Startup)
+    - name: Configure service for Tomcat (Centos)
       command: /opt/tomcat/bin/startup.sh
       become: yes
-      when: "'{{ ansible_user_id }}' == 'centos'"
+      when: ansible_user_id == 'centos'"
 
 
 
