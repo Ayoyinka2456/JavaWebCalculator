@@ -47,7 +47,9 @@
         dest: /opt/tomcat/webapps/
         force: yes
     - name: Configure service for Tomcat
-      command: sudo /opt/tomcat/bin/shutdown.sh
+      command: /opt/tomcat/bin/shutdown.sh
+      become: true
     - name: Start Tomcat
-      command: sudo /opt/tomcat/bin/startup.sh
+      command: /opt/tomcat/bin/startup.sh
+      become: true
 ...
