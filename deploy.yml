@@ -29,6 +29,7 @@
 
     - name: Configure service for Tomcat
       command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+      become: true
 
 # ---
 # - name: Deploying war file on Apache Tomcat server | By copying war file from
