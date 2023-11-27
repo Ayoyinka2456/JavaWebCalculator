@@ -1,4 +1,5 @@
-    pipeline {
+
+pipeline {
     agent {
         label 'ansible'
     }
@@ -47,9 +48,14 @@
                 sh "sudo mv JavaWebCalculator/target/*.war ${env.WORKSPACE}/"                
                 sh "cd ${env.WORKSPACE}/ && ansible-playbook deploy.yml -i hosts.ini"
                 // sh 'sudo ansible g1 -m copy -a "src=./*.war dest=/opt/tomcat/webapps/" -i hosts.ini'
-
-                
             }
+        }
+    }
+    post{
+        always {
+            emailext body: 'Check console output at $BUILD_URL to view the results.', 
+            subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', 
+            to: 'eas.adeyemi@gmail.com'
         }
     }
 }
