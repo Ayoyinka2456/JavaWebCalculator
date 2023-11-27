@@ -84,6 +84,7 @@
     - name: Configure service for Tomcat (Startup)
       command: /opt/tomcat/bin/startup.sh
       become: yes
-      when: {{ ansible_user_id == 'centos' }}
+      when: "'{{ ansible_user_id }}' == 'centos'"
+
 
 
