@@ -76,9 +76,8 @@
         until: job_result.finished
         retries: 300
         delay: 1
-      when: "'FAILED' not in job_result.stdout
+      when: "'FAILED' not in job_result.stdout"
     
     - name: Configure service for Tomcat (Startup)
       command: /opt/tomcat/bin/startup.sh
 
-...
