@@ -28,5 +28,6 @@
       # remote_src: yes
 
     - name: Configure service for Tomcat
-      command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+      command: /opt/tomcat/bin/shutdown.sh
+      command: /opt/tomcat/bin/startup.sh
 ...
