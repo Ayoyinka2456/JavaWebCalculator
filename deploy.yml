@@ -71,11 +71,11 @@
     
     - name: Wait for Tomcat to shut down
       async_status:
-      jid: "{{ item.ansible_job_id }}"
-      until: "'finished' in {{ item.ansible_job_result }}"
-      retries: 300
-      delay: 1
-      with_items: "{{ ansible_play_batch }}"
+        jid: "{{ item.ansible_job_id }}"
+        until: "'finished' in {{ item.ansible_job_result }}"
+        retries: 300
+        delay: 1
+        with_items: "{{ ansible_play_batch }}"
       when: "'FAILED' not in item.ansible_job_result.stdout"
     
     - name: Configure service for Tomcat (Startup)
