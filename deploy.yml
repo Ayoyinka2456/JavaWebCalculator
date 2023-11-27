@@ -15,21 +15,21 @@
 # ...
 
 
----
-- name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
-  hosts: g1
-  become: true
-  tasks:
-    - name: Copy a file to a remote host
-      copy:
-        src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
-        dest: /opt/tomcat/webapps/
-        force: yes
-      # remote_src: yes
+# ---
+# - name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
+#   hosts: g1
+#   become: true
+#   tasks:
+#     - name: Copy a file to a remote host
+#       copy:
+#         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
+#         dest: /opt/tomcat/webapps/
+#         force: yes
+#       # remote_src: yes
 
-    - name: Configure service for Tomcat
-      command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
-      become: true
+#     - name: Configure service for Tomcat
+#       command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+#       become: true
 
 # ---
 # - name: Deploying war file on Apache Tomcat server | By copying war file from
@@ -49,3 +49,36 @@
 #       command: /opt/tomcat/bin/startup.sh
 #       become: true
 # ...
+
+
+---
+- name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
+  hosts: g1
+  become: true
+  tasks:
+    - name: Copy a file to a remote host
+      copy:
+        src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
+        dest: /opt/tomcat/webapps/
+        force: yes
+      # remote_src: yes
+
+    - name: Configure service for Tomcat (Shutdown)
+      command: /opt/tomcat/bin/shutdown.sh
+      async: 300
+      poll: 0
+      ignore_errors: yes
+    
+    - name: Wait for Tomcat to shut down
+      async_status:
+      jid: "{{ item.ansible_job_id }}"
+      until: "'finished' in {{ item.ansible_job_result }}"
+      retries: 300
+      delay: 1
+      with_items: "{{ ansible_play_batch }}"
+      when: "'FAILED' not in item.ansible_job_result.stdout"
+    
+    - name: Configure service for Tomcat (Startup)
+      command: /opt/tomcat/bin/startup.sh
+
+...
