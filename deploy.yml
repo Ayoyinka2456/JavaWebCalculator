@@ -31,28 +31,9 @@
 #       command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
 #       become: true
 
-# ---
-# - name: Deploying war file on Apache Tomcat server | By copying war file from
-#     build server to deployment servers
-#   hosts: g1
-#   become: true
-#   tasks:
-#     - name: Copy a file to a remote host
-#       copy:
-#         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
-#         dest: /opt/tomcat/webapps/
-#         force: yes
-#     - name: Configure service for Tomcat
-#       command: /opt/tomcat/bin/shutdown.sh
-#       become: true
-#     - name: Start Tomcat
-#       command: /opt/tomcat/bin/startup.sh
-#       become: true
-# ...
-
-
 ---
-- name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
+- name: Deploying war file on Apache Tomcat server | By copying war file from
+    build server to deployment servers
   hosts: g1
   become: true
   tasks:
@@ -61,30 +42,49 @@
         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
         dest: /opt/tomcat/webapps/
         force: yes
-
-    - name: Configure service for Tomcat (Shutdown)
-      command: /opt/tomcat/bin/shutdown.sh
-      async: 300
-      poll: 0
-      ignore_errors: yes
-      register: shutdown_result
-
-    - name: Wait for Tomcat to shut down
-      async_status:
-        jid: "{{ shutdown_result.ansible_job_id }}"
-      register: job_result
-      until: job_result.finished
-      retries: 300
-      delay: 1
-
-    - name: Configure service for Tomcat (Startup)
+    # - name: Configure service for Tomcat
+    #   command: /opt/tomcat/bin/shutdown.sh
+    #   become: true
+    - name: Start Tomcat
       command: /opt/tomcat/bin/startup.sh
-      when: "'FAILED' not in job_result.stdout"
+      become: true
+...
 
-    - name: Configure service for Tomcat (Centos)
-      command: /opt/tomcat/bin/startup.sh
-      become: yes
-      when: ansible_user_id == 'centos'
+
+# ---
+# - name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
+#   hosts: g1
+#   become: true
+#   tasks:
+#     - name: Copy a file to a remote host
+#       copy:
+#         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
+#         dest: /opt/tomcat/webapps/
+#         force: yes
+
+#     - name: Configure service for Tomcat (Shutdown)
+#       command: /opt/tomcat/bin/shutdown.sh
+#       async: 300
+#       poll: 0
+#       ignore_errors: yes
+#       register: shutdown_result
+
+#     - name: Wait for Tomcat to shut down
+#       async_status:
+#         jid: "{{ shutdown_result.ansible_job_id }}"
+#       register: job_result
+#       until: job_result.finished
+#       retries: 300
+#       delay: 1
+
+#     - name: Configure service for Tomcat (Startup)
+#       command: /opt/tomcat/bin/startup.sh
+#       when: "'FAILED' not in job_result.stdout"
+
+#     - name: Configure service for Tomcat (Centos)
+#       command: /opt/tomcat/bin/startup.sh
+#       become: yes
+#       when: ansible_user_id == 'centos'
 
 
 
