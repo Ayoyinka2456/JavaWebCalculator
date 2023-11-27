@@ -46,8 +46,8 @@
         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
         dest: /opt/tomcat/webapps/
         force: yes
-    - name: Configure service for Tomcat
-      command: /opt/tomcat/bin/shutdown.sh
+    # - name: Configure service for Tomcat
+    #   command: /opt/tomcat/bin/shutdown.sh
     - name: Start Tomcat
       command: /opt/tomcat/bin/startup.sh
 
