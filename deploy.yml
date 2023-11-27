@@ -15,29 +15,8 @@
 # ...
 
 
-# ---
-# - name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
-#   hosts: g1
-#   become: true
-#   tasks:
-#     - name: Copy a file to a remote host
-#       copy:
-#         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
-#         dest: /opt/tomcat/webapps/
-#         force: yes
-#       # remote_src: yes
-
-#     # - name: Configure service for Tomcat
-#     #   command: /opt/tomcat/bin/shutdown.sh
-#     #   command: /opt/tomcat/bin/startup.sh
-#     - name: Configure service for Tomcat
-#     command: /opt/tomcat/bin/shutdown.sh
-#     - name: Start Tomcat
-#     command: /opt/tomcat/bin/startup.sh
-
 ---
-- name: Deploying war file on Apache Tomcat server | By copying war file from
-    build server to deployment servers
+- name: Deploying war file on Apache Tomcat server | By copying war file from build server to deployment servers
   hosts: g1
   become: true
   tasks:
@@ -46,10 +25,26 @@
         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
         dest: /opt/tomcat/webapps/
         force: yes
+      # remote_src: yes
+
     - name: Configure service for Tomcat
-      command: /opt/tomcat/bin/shutdown.sh
-      become: true
-    - name: Start Tomcat
-      command: /opt/tomcat/bin/startup.sh
-      become: true
-...
+      command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+
+# ---
+# - name: Deploying war file on Apache Tomcat server | By copying war file from
+#     build server to deployment servers
+#   hosts: g1
+#   become: true
+#   tasks:
+#     - name: Copy a file to a remote host
+#       copy:
+#         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
+#         dest: /opt/tomcat/webapps/
+#         force: yes
+#     - name: Configure service for Tomcat
+#       command: /opt/tomcat/bin/shutdown.sh
+#       become: true
+#     - name: Start Tomcat
+#       command: /opt/tomcat/bin/startup.sh
+#       become: true
+# ...
