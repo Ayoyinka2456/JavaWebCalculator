@@ -61,23 +61,24 @@
         src: /home/centos/workspace/JavaWebCalculator/webapp-0.2.war
         dest: /opt/tomcat/webapps/
         force: yes
-      # remote_src: yes
 
     - name: Configure service for Tomcat (Shutdown)
       command: /opt/tomcat/bin/shutdown.sh
       async: 300
       poll: 0
       ignore_errors: yes
-    
+      register: shutdown_result
+
     - name: Wait for Tomcat to shut down
       async_status:
-        jid: "{{ ansible_job_id }}"
-        register: job_result
-        until: job_result.finished
-        retries: 300
-        delay: 1
-      when: "'FAILED' not in job_result.stdout"
-    
+        jid: "{{ shutdown_result.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 300
+      delay: 1
+
     - name: Configure service for Tomcat (Startup)
       command: /opt/tomcat/bin/startup.sh
+      when: "'FAILED' not in job_result.stdout"
+
 
