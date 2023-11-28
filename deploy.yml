@@ -33,7 +33,7 @@
 
 ---
 - name: Deploying war file on Apache Tomcat server | By copying war file from
-    build server to deployment servers
+    build server to deployment server
   hosts: g1
   become: true
   tasks:
